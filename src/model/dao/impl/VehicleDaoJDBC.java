@@ -85,8 +85,39 @@ public class VehicleDaoJDBC implements VehicleDao{
 	
 	@Override
 	public List<Vehicle> findByAssembler(Vehicle obj) {
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement(
+					"SELECT * FROM tbl_veiculos WHERE montadora_veiculo = ? ");
+					
+			
+			st.setString(1, obj.getAssembler());
+			rs = st.executeQuery();
+			List<Vehicle> list = new ArrayList<>();
+			Map<String, Vehicle> map = new HashMap<>();
+			
+			while (rs.next()) {
+				Vehicle vehicle = map.get(rs.getString("montadora_veiculo"));
+				
+				if (vehicle == null) {
+					vehicle = instanteateVehicle(rs);
+					map.put("montadora_veiculo", vehicle);
+					
+				}
+				list.add(vehicle);
+				return list;
+			}
+				
+			return null;
+		}		
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
 	}
 
 	@Override
