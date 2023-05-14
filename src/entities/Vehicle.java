@@ -106,6 +106,13 @@ public class Vehicle implements Serializable{
 				&& Objects.equals(price, other.price) && Objects.equals(quantity, other.quantity)
 				&& Objects.equals(yearModel, other.yearModel);
 	}
+
+	@Override
+	public String toString() {
+		return "Vehicle [id=" + id + ", model=" + model + ", assembler=" + assembler + ", color=" + color
+				+ ", yearModel=" + yearModel + ", price=" + price + ", quantity=" + quantity + "]";
+	}
+	
 	
 	
 	

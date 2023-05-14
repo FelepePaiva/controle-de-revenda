@@ -5,7 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import db.DB;
 import db.DbException;
@@ -63,20 +66,23 @@ public class VehicleDaoJDBC implements VehicleDao{
 		}
 	}
 
+	//Méotod auxiliar para facilitar a implementação
+	private Vehicle instanteateVehicle(ResultSet rs) throws SQLException {
+		Vehicle vehicle = new Vehicle();
+		vehicle.setId(rs.getInt("id_veiculo"));
+		vehicle.setModel(rs.getString("modelo_veiculo"));
+		vehicle.setAssembler(rs.getString("montadora_veiculo"));
+		vehicle.setColor(rs.getString("cor_veiculo"));
+		vehicle.setYearModel(rs.getInt("ano_veiculo"));
+		vehicle.setPrice(rs.getDouble("preco_veiculo"));
+		vehicle.setQuantity(rs.getInt("quantidade"));
+		return vehicle;
+		
+		
+		
+	}
+
 	
-
-	@Override
-	public List<Vehicle> findByModel(Vehicle obj) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Vehicle> findByYear(Vehicle obj) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public List<Vehicle> findByAssembler(Vehicle obj) {
 		// TODO Auto-generated method stub
@@ -87,6 +93,80 @@ public class VehicleDaoJDBC implements VehicleDao{
 	public Vehicle buy(int id, String modelo, String montadora, String cor, int ano, double preco, int quantidade) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<Vehicle> findByModel(Vehicle obj) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement(
+					"SELECT * FROM tbl_veiculos WHERE modelo_veiculo = ? ");
+					
+			
+			st.setString(1, obj.getModel());
+			rs = st.executeQuery();
+			List<Vehicle> list = new ArrayList<>();
+			Map<String, Vehicle> map = new HashMap<>();
+			
+			while (rs.next()) {
+				Vehicle vehicle = map.get(rs.getString("modelo_veiculo"));
+				
+				if (vehicle == null) {
+					vehicle = instanteateVehicle(rs);
+					map.put("modelo_veiculo", vehicle);
+					
+				}
+				list.add(vehicle);
+				return list;
+			}
+				
+			return null;
+		}		
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+	}
+
+	@Override
+	public List<Vehicle> findByYear(Vehicle vehicle) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement(
+					"SELECT * FROM tbl_veiculos WHERE ano_veiculo = ? ");
+					
+			
+			st.setInt(1, vehicle.getYearModel());
+			rs = st.executeQuery();
+			List<Vehicle> list = new ArrayList<>();
+			Map<Integer, Vehicle> map = new HashMap<>();
+			
+			while (rs.next()) {
+				Vehicle veh = map.get(rs.getInt("ano_veiculo"));
+				
+				if (veh == null) {
+					veh = instanteateVehicle(rs);
+					map.put(rs.getInt("ano_veiculo"), veh);
+					
+				}
+				Vehicle obj = instanteateVehicle(rs);
+				list.add(obj);
+			}				
+			return list;
+		}		
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+		
 	}
 	
 
