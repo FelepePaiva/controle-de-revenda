@@ -5,8 +5,8 @@ import java.util.List;
 import entities.Vehicle;
 
 public interface VehicleDao {
-	void sell (Vehicle obj);
-	void buy (Vehicle obj);
+	void removeVehicle (Integer id);
+	void addVehicle(Vehicle obj);
 	List<Vehicle> findByYear (Vehicle obj);
 	List<Vehicle> findByModel (Vehicle obj);
 	List<Vehicle> findByAssembler (Vehicle obj);

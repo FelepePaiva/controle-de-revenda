@@ -22,13 +22,27 @@ public class VehicleDaoJDBC implements VehicleDao{
 	}
 
 	@Override
-	public void sell(Vehicle obj) {
+	public void removeVehicle(Integer id) {
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("DELETE FROM tbl_veiculos WHERE id_veiculo = ? ");
+			st.setInt(1, id);
+			st.executeUpdate();
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+			
+		}
+		finally {
+			DB.closeStatement(st);
+		}
+		
 		
 		
 	}
 
 	@Override
-	public void buy(Vehicle obj) {
+	public void addVehicle(Vehicle obj) {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
@@ -151,8 +165,9 @@ public class VehicleDaoJDBC implements VehicleDao{
 				list.add(vehicle);
 				return list;
 			}
+			return list;
 				
-			return null;
+			
 		}		
 		catch (SQLException e) {
 			throw new DbException(e.getMessage());
